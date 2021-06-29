@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentManagement", "ContentManagement\ContentManagement.csproj", "{DF723BF1-2D17-4762-99AE-6EBECEEDBC2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS", "FlatoutCMS\FlatoutCMS.csproj", "{4F4A849A-0450-448E-BE6A-9EDCFD48BA66}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentManagement.Core", "ContentManagement.Core\ContentManagement.Core.csproj", "{100A33AA-6BA3-4CCC-BA05-632091F12B08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS.ContentParsers", "FlatoutCMS.ContentParsers\FlatoutCMS.ContentParsers.csproj", "{934DEB1E-A984-4B9D-8044-386DD09973D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentParsers", "ContentParsers\ContentParsers.csproj", "{DF0E86F5-6476-4B36-AB7C-0880853E1048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS.Core", "FlatoutCMS.Core\FlatoutCMS.Core.csproj", "{AA413E4D-1A01-47A3-8B56-465993374014}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DF723BF1-2D17-4762-99AE-6EBECEEDBC2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF723BF1-2D17-4762-99AE-6EBECEEDBC2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF723BF1-2D17-4762-99AE-6EBECEEDBC2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF723BF1-2D17-4762-99AE-6EBECEEDBC2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{100A33AA-6BA3-4CCC-BA05-632091F12B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{100A33AA-6BA3-4CCC-BA05-632091F12B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{100A33AA-6BA3-4CCC-BA05-632091F12B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{100A33AA-6BA3-4CCC-BA05-632091F12B08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DF0E86F5-6476-4B36-AB7C-0880853E1048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF0E86F5-6476-4B36-AB7C-0880853E1048}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF0E86F5-6476-4B36-AB7C-0880853E1048}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF0E86F5-6476-4B36-AB7C-0880853E1048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F4A849A-0450-448E-BE6A-9EDCFD48BA66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4A849A-0450-448E-BE6A-9EDCFD48BA66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4A849A-0450-448E-BE6A-9EDCFD48BA66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4A849A-0450-448E-BE6A-9EDCFD48BA66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{934DEB1E-A984-4B9D-8044-386DD09973D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{934DEB1E-A984-4B9D-8044-386DD09973D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{934DEB1E-A984-4B9D-8044-386DD09973D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{934DEB1E-A984-4B9D-8044-386DD09973D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA413E4D-1A01-47A3-8B56-465993374014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA413E4D-1A01-47A3-8B56-465993374014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA413E4D-1A01-47A3-8B56-465993374014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA413E4D-1A01-47A3-8B56-465993374014}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
