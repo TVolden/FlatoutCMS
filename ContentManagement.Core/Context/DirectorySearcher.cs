@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace ContentManagement.Context
+namespace FlatoutCMS.ConntentManagement.Context
 {
     public class DirectorySearcher
     {

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public class AssemblyEmbryo : IAssemblyEmbryo
     {

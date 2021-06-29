@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ContentManagement.Context
+namespace FlatoutCMS.ConntentManagement.Context
 {
     class FileReader
     {

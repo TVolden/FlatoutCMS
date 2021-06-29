@@ -1,6 +1,6 @@
-﻿using ContentManagement.Content;
+﻿using FlatoutCMS.ConntentManagement.Content;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public class ReferencePage<TPageModel>
     {

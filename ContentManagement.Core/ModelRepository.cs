@@ -1,7 +1,7 @@
-﻿using ContentManagement.Content;
-using ContentManagement.Context;
+﻿using FlatoutCMS.ConntentManagement.Content;
+using FlatoutCMS.ConntentManagement.Context;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public class ModelRepository
     {

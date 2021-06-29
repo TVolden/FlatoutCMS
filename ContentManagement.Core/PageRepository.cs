@@ -1,8 +1,8 @@
-﻿using ContentManagement.Content;
-using ContentManagement.Context;
+﻿using FlatoutCMS.ConntentManagement.Content;
+using FlatoutCMS.ConntentManagement.Context;
 using System.Collections.Generic;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public class PageRepository
     {

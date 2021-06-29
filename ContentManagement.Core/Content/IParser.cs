@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ContentManagement.Content
+namespace FlatoutCMS.ConntentManagement.Content
 {
     public interface IParser
     {

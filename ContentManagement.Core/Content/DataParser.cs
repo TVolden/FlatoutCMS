@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace ContentManagement.Content
+namespace FlatoutCMS.ConntentManagement.Content
 {
     class DataParser : IParser
     {

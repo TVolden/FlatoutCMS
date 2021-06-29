@@ -1,11 +1,11 @@
-﻿using ContentManagement.Content;
-using ContentManagement.Context;
-using ContentParsers;
+﻿using FlatoutCMS.ConntentManagement.Content;
+using FlatoutCMS.ConntentManagement.Context;
+using FlatoutCMS.ContentParsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public static class InversionOfControlHelper
     {

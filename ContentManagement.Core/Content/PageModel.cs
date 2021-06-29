@@ -1,4 +1,4 @@
-﻿namespace ContentManagement.Content
+﻿namespace FlatoutCMS.ConntentManagement.Content
 {
     class PageModel : IPageModel
     {

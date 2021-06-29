@@ -1,7 +1,7 @@
-﻿using ContentManagement.Content;
+﻿using FlatoutCMS.ConntentManagement.Content;
 using Markdig;
 
-namespace ContentParsers
+namespace FlatoutCMS.ContentParsers
 {
     public class MarkdownParser : IMarkdownParser
     {

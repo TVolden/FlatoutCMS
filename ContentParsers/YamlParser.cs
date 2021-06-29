@@ -1,8 +1,8 @@
-﻿using ContentManagement.Content;
+﻿using FlatoutCMS.ConntentManagement.Content;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace ContentParsers
+namespace FlatoutCMS.ContentParsers
 {
     public class YamlParser : IYamlParser
     {

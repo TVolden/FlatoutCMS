@@ -1,9 +1,9 @@
-﻿using ContentManagement.Content;
+﻿using FlatoutCMS.ConntentManagement.Content;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace ContentManagement.Context
+namespace FlatoutCMS.ConntentManagement.Context
 {
     public class ModelTypeFetcher
     {

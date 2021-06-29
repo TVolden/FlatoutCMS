@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ContentManagement
+namespace FlatoutCMS.ConntentManagement
 {
     public sealed class Maybe<ValueType>
     {

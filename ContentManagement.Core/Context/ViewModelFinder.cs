@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
-namespace ContentManagement.Context
+namespace FlatoutCMS.ConntentManagement.Context
 {
     public class ViewModelFinder
     {
