@@ -5,6 +5,18 @@
     <Nullable>disable</Nullable>
     <AssemblyName>FlatoutCMS.Core</AssemblyName>
 	<Version>1.0.1</Version>
+	<Authors>Thomas Volden</Authors>
+	<Copyright>MIT</Copyright>
+	<RepositoryUrl>https://github.com/TVolden/FlatoutCMS</RepositoryUrl>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
