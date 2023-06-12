@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>disable</Nullable>
-    <AssemblyName>ContentManagement.Core</AssemblyName>
+    <AssemblyName>FlatoutCMS.Core</AssemblyName>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
