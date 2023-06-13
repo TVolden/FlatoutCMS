@@ -12,8 +12,8 @@ namespace FlatoutCMS
     {
         public static void AddContentManagement(this IServiceCollection services, string rootPath, IConfiguration configuration, Assembly assembly)
         {
-            services.AddSingleton(new DirectorySearcher($@"{rootPath}\Data\{configuration["Folders:Published"]}\"));
-            services.AddSingleton(new ViewModelFinder($@"{rootPath}\Views\{configuration["Folders:Views"]}\"));
+            services.AddSingleton(new DirectorySearcher($@"{rootPath}\{configuration["Folders:Published"]}\"));
+            services.AddSingleton(new ViewModelFinder($@"{rootPath}\{configuration["Folders:Views"]}\"));
             services.AddSingleton<DataFileFetcher>();
             services.AddSingleton<IYamlParser>(new YamlParser());
             services.AddSingleton<IMarkdownParser>(new MarkdownParser());
