@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS.ContentParsers",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS.Core", "FlatoutCMS.Core\FlatoutCMS.Core.csproj", "{AA413E4D-1A01-47A3-8B56-465993374014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlatoutCMS.Admin", "FlatoutCMS.Admin\FlatoutCMS.Admin.csproj", "{7B69E795-5495-426B-9522-6596890B7F5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlatoutCMS.Admin", "FlatoutCMS.Admin\FlatoutCMS.Admin.csproj", "{7B69E795-5495-426B-9522-6596890B7F5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -10,6 +10,7 @@
 	<RepositoryUrl>https://github.com/TVolden/FlatoutCMS</RepositoryUrl>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
