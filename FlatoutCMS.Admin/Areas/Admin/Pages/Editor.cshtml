@@ -1,0 +1,48 @@
+﻿@page
+@model FlatoutCMS.Admin.Areas.Admin.Pages.EditorModel
+@using System.IO;
+@{
+    Layout = "_admin";
+    ViewData["Title"] = "Admin";
+}
+@{
+    void print_folder(string folder)
+    {
+        @if (Model.accept.Contains(folder))
+        {
+            <ul class="list">
+                @foreach (var sub in Directory.GetDirectories(folder))
+                {
+                    <li class="list-item">@sub</li>
+                    print_folder(sub);
+                }
+                @foreach (var file in Directory.GetFiles(folder))
+                {
+                    <li class="list-item">@file</li>
+                }
+            </ul>
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-4">
+        <h2>Files:</h2>
+        <nav>
+            <ul class="list">
+            @foreach (var folder in Directory.GetDirectories("."))
+            {
+                print_folder(folder);
+            }
+            </ul>
+        </nav>
+    </div>
+
+    <div class="col-8">
+        Editor
+    </div>
+</div>
+
+@{
+
+}
