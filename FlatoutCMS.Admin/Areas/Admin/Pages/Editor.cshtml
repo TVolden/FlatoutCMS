@@ -26,7 +26,7 @@
 
 <div class="flex" style="height:calc(100vh - 44px)">
 
-    {{-- Sidebar --}}
+    @* Sidebar *@
     <aside class="w-56 flex-shrink-0 overflow-y-auto bg-stone-900 border-r border-stone-700">
         @foreach (var root in Model.Roots)
         {
@@ -41,10 +41,10 @@
         }
     </aside>
 
-    {{-- Editor panel --}}
+    @* Editor panel *@
     <div class="flex-1 flex flex-col overflow-hidden">
 
-        {{-- Toolbar --}}
+        @* Toolbar *@
         <div class="flex items-center justify-between px-3 py-1.5 border-b border-stone-200 bg-white text-sm">
             <div class="flex items-center gap-2 min-w-0">
                 <span id="current-file" class="text-stone-400 truncate">No file selected</span>
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        {{-- Editor area --}}
+        @* Editor area *@
         <div id="editor-area" hidden class="flex-1 flex overflow-hidden">
             <div id="codemirror-wrap" class="flex-1 overflow-auto"></div>
             <div id="preview-pane" hidden class="flex-1 overflow-y-auto p-5 border-l border-stone-200 bg-white prose max-w-none"></div>

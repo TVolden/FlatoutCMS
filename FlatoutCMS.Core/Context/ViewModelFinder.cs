@@ -23,7 +23,7 @@ namespace FlatoutCMS.Core.Context
 
             var data = GetData(file);
 
-            var match = Regex.Match(data, "@model (.+)\r");
+            var match = Regex.Match(data, @"@model (.+?)\r?$", RegexOptions.Multiline);
             if (match.Success && match.Groups[1].Success)
                 return new Maybe<string>(match.Groups[1].Value);
 
