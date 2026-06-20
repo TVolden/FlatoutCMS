@@ -1,17 +1,34 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "FlatoutCMS Admin")</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-50 text-stone-900">
 
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width" />
-        <title>@ViewBag.Title</title>
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    </head>
-    <body>
-        <div class="fluent-container">
-            @RenderBody()
-        </div>
+    <header class="flex items-center gap-6 px-4 h-11 bg-stone-900 text-stone-200 text-sm">
+        <a href="/Admin" class="font-semibold text-white tracking-tight">FlatoutCMS</a>
+        <nav class="flex gap-4">
+            <a href="/Admin" class="text-stone-400 hover:text-white transition-colors">Dashboard</a>
+            <a href="/Admin/Editor" class="text-stone-400 hover:text-white transition-colors">Editor</a>
+        </nav>
+        @if (Context.User?.Identity?.IsAuthenticated == true)
+        {
+            <div class="ml-auto flex items-center gap-3 text-stone-400 text-xs">
+                <span>@Context.User.Identity.Name</span>
+                <form method="post" action="/Admin/Logout">
+                    <button type="submit" class="border border-stone-600 px-2.5 py-1 rounded hover:border-stone-400 hover:text-stone-200 transition-colors cursor-pointer">
+                        Sign out
+                    </button>
+                </form>
+            </div>
+        }
+    </header>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+    @RenderBody()
+
+    @RenderSection("Scripts", required: false)
+</body>
 </html>

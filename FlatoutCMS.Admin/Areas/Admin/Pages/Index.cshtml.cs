@@ -1,20 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
 
 namespace FlatoutCMS.Admin.Areas.Admin.Pages
 {
+    [Authorize(AuthenticationSchemes = "FlatoutAdmin")]
     public class IndexModel : PageModel
     {
-        private readonly IConfiguration configuration;
-
-        public IndexModel(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
-
-        public void OnGet()
-        {
-
-        }
+        public void OnGet() { }
     }
 }

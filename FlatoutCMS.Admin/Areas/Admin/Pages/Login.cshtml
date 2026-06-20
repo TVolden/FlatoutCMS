@@ -1,0 +1,33 @@
+@page
+@model FlatoutCMS.Admin.Areas.Admin.Pages.LoginModel
+@{
+    Layout = "_Admin";
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="min-h-[calc(100vh-44px)] flex items-center justify-center bg-stone-50">
+    <div class="w-80">
+        <h1 class="text-lg font-semibold text-stone-800 mb-6">Sign in to FlatoutCMS</h1>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded">@Model.ErrorMessage</p>
+        }
+
+        <form method="post" class="space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-stone-700 mb-1">Username</label>
+                <input id="username" type="text" asp-for="Username" required autofocus
+                       class="block w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-stone-700 mb-1">Password</label>
+                <input id="password" type="password" asp-for="Password" required
+                       class="block w-full border border-stone-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700 cursor-pointer">
+                Sign in
+            </button>
+        </form>
+    </div>
+</div>

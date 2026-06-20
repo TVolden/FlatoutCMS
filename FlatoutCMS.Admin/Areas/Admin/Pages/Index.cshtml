@@ -1,9 +1,25 @@
-﻿@page
+@page
 @model FlatoutCMS.Admin.Areas.Admin.Pages.IndexModel
-
-<h1>Flatout CMS Admin</h1>
-
-
 @{
-
+    Layout = "_Admin";
+    ViewData["Title"] = "Dashboard";
 }
+
+<div class="p-8">
+    <h1 class="text-xl font-semibold text-stone-800 mb-6">Dashboard</h1>
+
+    <div class="grid grid-cols-3 gap-4 max-w-2xl">
+        <a href="/Admin/Editor" class="block border border-stone-200 rounded p-4 hover:border-stone-400 transition-colors">
+            <p class="font-medium text-stone-800">Published</p>
+            <p class="text-sm text-stone-500 mt-1">Live content visible to visitors.</p>
+        </a>
+        <a href="/Admin/Editor" class="block border border-stone-200 rounded p-4 hover:border-stone-400 transition-colors">
+            <p class="font-medium text-stone-800">Drafts</p>
+            <p class="text-sm text-stone-500 mt-1">Work-in-progress. Promote when ready.</p>
+        </a>
+        <a href="/Admin/Editor" class="block border border-stone-200 rounded p-4 hover:border-stone-400 transition-colors">
+            <p class="font-medium text-stone-800">Views</p>
+            <p class="text-sm text-stone-500 mt-1">Razor templates controlling page layout.</p>
+        </a>
+    </div>
+</div>

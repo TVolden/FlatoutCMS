@@ -1,45 +1,213 @@
 @page
 @model FlatoutCMS.Admin.Areas.Admin.Pages.EditorModel
-@using System.IO;
 @{
-    Layout = "_admin";
-    ViewData["Title"] = "Admin";
+    Layout = "_Admin";
+    ViewData["Title"] = "Editor";
 }
 
-<div class="row">
-    <div class="col-4">
-        <h2>Files:</h2>
-        <nav>
-            <ul class="list">
-            @foreach (var folder in Directory.GetDirectories("."))
-            {
-                PrintFolder(folder);
-            }
-            </ul>
-        </nav>
-    </div>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{ var xsrfToken = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken; }
 
-    <div class="col-8">
-        Editor
+@section Scripts {
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/markdown/markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+<style>
+    .CodeMirror { height: 100%; font-size: 13px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    summary::-webkit-details-marker { display: none; }
+    summary::marker { display: none; }
+</style>
+}
+
+<div class="flex" style="height:calc(100vh - 44px)">
+
+    {{-- Sidebar --}}
+    <aside class="w-56 flex-shrink-0 overflow-y-auto bg-stone-900 border-r border-stone-700">
+        @foreach (var root in Model.Roots)
+        {
+            <div class="mt-3">
+                <p class="px-3 mb-1 text-[10px] font-bold tracking-widest uppercase text-stone-500">@root.Label</p>
+                @{ PrintNodes(root.Children, 0); }
+            </div>
+        }
+        @if (!Model.Roots.Any())
+        {
+            <p class="px-3 py-4 text-xs text-stone-500">No folders configured.<br />Add <code>Folders:Published</code>, <code>Folders:Drafts</code>, <code>Folders:Views</code> to appsettings.</p>
+        }
+    </aside>
+
+    {{-- Editor panel --}}
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        {{-- Toolbar --}}
+        <div class="flex items-center justify-between px-3 py-1.5 border-b border-stone-200 bg-white text-sm">
+            <div class="flex items-center gap-2 min-w-0">
+                <span id="current-file" class="text-stone-400 truncate">No file selected</span>
+                <span id="role-badge" hidden class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase"></span>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <span id="save-status" class="text-xs text-stone-400"></span>
+                <button id="btn-preview" hidden onclick="togglePreview()" class="px-2.5 py-1 text-xs border border-stone-300 rounded hover:bg-stone-100 cursor-pointer">Preview</button>
+                <button id="btn-promote" hidden onclick="promoteFile()" class="px-2.5 py-1 text-xs bg-amber-500 text-white rounded hover:bg-amber-600 cursor-pointer">Promote</button>
+                <button id="btn-save" disabled onclick="saveFile()" class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-40 cursor-pointer">Save</button>
+            </div>
+        </div>
+
+        {{-- Editor area --}}
+        <div id="editor-area" hidden class="flex-1 flex overflow-hidden">
+            <div id="codemirror-wrap" class="flex-1 overflow-auto"></div>
+            <div id="preview-pane" hidden class="flex-1 overflow-y-auto p-5 border-l border-stone-200 bg-white prose max-w-none"></div>
+        </div>
+
+        <div id="no-file-msg" class="flex-1 flex items-center justify-center text-sm text-stone-400">
+            Select a file to start editing.
+        </div>
     </div>
 </div>
 
 @functions {
-    void PrintFolder(string folder)
+    void PrintNodes(List<FlatoutCMS.Admin.Areas.Admin.Pages.FileNode> nodes, int depth)
     {
-        if (Model.accept.Contains(folder))
+        var indent = depth > 0 ? $"pl-{depth * 3}" : "";
+        foreach (var node in nodes)
         {
-            <ul class="list">
-                @foreach (var sub in Directory.GetDirectories(folder))
-                {
-                    <li class="list-item">@sub</li>
-                    PrintFolder(sub);
-                }
-                @foreach (var file in Directory.GetFiles(folder))
-                {
-                    <li class="list-item">@file</li>
-                }
-            </ul>
+            if (node.IsDirectory)
+            {
+                <details class="@indent">
+                    <summary class="flex items-center gap-1 px-3 py-0.5 text-xs text-stone-400 hover:text-stone-200 cursor-pointer select-none">
+                        <span class="text-stone-600">▸</span> @node.Name
+                    </summary>
+                    @{ PrintNodes(node.Children, depth + 1); }
+                </details>
+            }
+            else
+            {
+                <a href="#"
+                   class="tree-file block px-3 py-0.5 font-mono text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-100 truncate @indent"
+                   data-path="@node.EncodedPath"
+                   data-role="@node.Role"
+                   onclick="loadFile(this); return false;">@node.Name</a>
+            }
         }
     }
 }
+
+<script>
+    const XSRF = '@xsrfToken';
+    let editor, currentPath = null, currentRole = null, isDirty = false, previewVisible = false, previewTimer = null;
+
+    const BADGES = {
+        drafts:    { label: 'Draft',     cls: 'bg-amber-100 text-amber-800' },
+        published: { label: 'Published', cls: 'bg-green-100 text-green-800' },
+        views:     { label: 'View',      cls: 'bg-sky-100 text-sky-800' }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        editor = CodeMirror(document.getElementById('codemirror-wrap'), {
+            lineNumbers: true, lineWrapping: true, mode: 'markdown'
+        });
+        editor.on('change', () => {
+            if (!isDirty) { isDirty = true; setStatus('Unsaved'); }
+            if (previewVisible) { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 300); }
+        });
+    });
+
+    window.addEventListener('beforeunload', e => { if (isDirty) { e.preventDefault(); e.returnValue = ''; } });
+
+    function loadFile(link) {
+        if (isDirty && !confirm('Discard unsaved changes?')) return;
+        document.querySelectorAll('.tree-file.active').forEach(a => {
+            a.classList.remove('active', 'bg-stone-700', 'text-white');
+            a.classList.add('text-stone-400');
+        });
+        link.classList.add('active', 'bg-stone-700', 'text-white');
+        link.classList.remove('text-stone-400');
+
+        fetch(`?handler=FileContent&path=${encodeURIComponent(link.dataset.path)}`)
+            .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+            .then(data => {
+                currentPath = link.dataset.path;
+                currentRole = data.role;
+                isDirty = false;
+                editor.setOption('mode', data.extension === '.md' ? 'markdown' : 'htmlmixed');
+                editor.setValue(data.content);
+                editor.clearHistory();
+
+                document.getElementById('current-file').textContent = link.textContent.trim();
+                setBadge(data.role);
+
+                const isMd = data.extension === '.md';
+                document.getElementById('btn-preview').hidden = !isMd;
+                if (previewVisible && !isMd) hidePreview();
+                document.getElementById('btn-promote').hidden = data.role !== 'drafts';
+                document.getElementById('btn-save').disabled = false;
+                setStatus('');
+                document.getElementById('editor-area').hidden = false;
+                document.getElementById('no-file-msg').hidden = true;
+                editor.refresh();
+            })
+            .catch(() => alert('Could not load file.'));
+    }
+
+    function saveFile() {
+        if (!currentPath) return;
+        setStatus('Saving…');
+        fetch('?handler=SaveFile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': XSRF },
+            body: JSON.stringify({ path: currentPath, content: editor.getValue() })
+        })
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+        .then(() => { isDirty = false; setStatus('Saved'); setTimeout(() => setStatus(''), 3000); })
+        .catch(() => setStatus('Save failed'));
+    }
+
+    function promoteFile() {
+        if (currentRole !== 'drafts' || !confirm('Promote to Published? Overwrites existing published version.')) return;
+        fetch('?handler=PromoteFile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': XSRF },
+            body: JSON.stringify({ path: currentPath })
+        })
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+        .then(() => toast('Promoted to Published.'))
+        .catch(() => alert('Promote failed.'));
+    }
+
+    function togglePreview() { previewVisible ? hidePreview() : showPreview(); }
+
+    function showPreview() {
+        previewVisible = true;
+        document.getElementById('preview-pane').hidden = false;
+        document.getElementById('btn-preview').textContent = 'Hide preview';
+        renderPreview(); editor.refresh();
+    }
+    function hidePreview() {
+        previewVisible = false;
+        document.getElementById('preview-pane').hidden = true;
+        document.getElementById('btn-preview').textContent = 'Preview';
+        editor.refresh();
+    }
+    function renderPreview() {
+        document.getElementById('preview-pane').innerHTML = marked.parse(editor.getValue());
+    }
+
+    function setBadge(role) {
+        const b = document.getElementById('role-badge'), info = BADGES[role];
+        if (info) { b.textContent = info.label; b.className = `text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${info.cls}`; b.hidden = false; }
+        else b.hidden = true;
+    }
+    function setStatus(msg) { document.getElementById('save-status').textContent = msg; }
+    function toast(msg) {
+        const t = document.createElement('div');
+        t.textContent = msg;
+        t.className = 'fixed bottom-4 right-4 bg-stone-900 text-white text-sm px-4 py-2 rounded shadow-lg z-50';
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
+</script>
