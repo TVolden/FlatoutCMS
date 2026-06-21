@@ -50,6 +50,34 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
             return new JsonResult(new { success = true });
         }
 
+        public IActionResult OnPostCreateFile([FromBody] CreateFileRequest request)
+        {
+            if (request == null || !TryDecodePath(request.DirectoryPath, out var dirPath))
+                return BadRequest();
+
+            var normalizedDir = Path.GetFullPath(dirPath);
+            if (!GetAllowedRoots().Any(root => normalizedDir.StartsWith(root, StringComparison.OrdinalIgnoreCase)))
+                return BadRequest();
+
+            var fileName = request.FileName?.Trim();
+            if (string.IsNullOrEmpty(fileName))
+                return BadRequest("File name is required.");
+
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                return BadRequest("Invalid file name.");
+
+            var ext = Path.GetExtension(fileName).ToLowerInvariant();
+            if (!AllowedExtensions.Contains(ext))
+                return BadRequest($"Extension '{ext}' is not allowed. Use .md or .cshtml.");
+
+            var fullPath = Path.Combine(normalizedDir, fileName);
+            if (System.IO.File.Exists(fullPath))
+                return Conflict("A file with that name already exists.");
+
+            System.IO.File.WriteAllText(fullPath, "", Encoding.UTF8);
+            return new JsonResult(new { success = true, encodedPath = EncodePath(fullPath) });
+        }
+
         public IActionResult OnPostPromoteFile([FromBody] PromoteRequest request)
         {
             if (request == null || !TryDecodePath(request.Path, out var fullPath))
@@ -89,12 +117,14 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
                     Label = label,
                     Role = role,
                     RootPath = fullRoot,
+                    EncodedRootPath = EncodePath(fullRoot),
                     Children = BuildTree(fullRoot, role)
                 });
             }
             AddRoot("Published", "published", GetPublishedRoot());
             AddRoot("Drafts", "drafts", GetDraftsRoot());
             AddRoot("Views", "views", GetViewsRoot());
+            AddRoot("Pages", "pages", GetPagesRoot());
             return roots;
         }
 
@@ -104,8 +134,7 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
             foreach (var sub in Directory.GetDirectories(dir).OrderBy(d => d))
             {
                 var children = BuildTree(sub, role);
-                if (children.Count > 0)
-                    nodes.Add(new FileNode { Name = Path.GetFileName(sub), IsDirectory = true, Children = children, Role = role });
+                nodes.Add(new FileNode { Name = Path.GetFileName(sub), IsDirectory = true, EncodedPath = EncodePath(sub), Children = children, Role = role });
             }
             foreach (var file in Directory.GetFiles(dir).OrderBy(f => f))
             {
@@ -134,20 +163,23 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
             var published = GetPublishedRoot();
             var drafts = GetDraftsRoot();
             var views = GetViewsRoot();
+            var pages = GetPagesRoot();
             if (published != null && fullPath.StartsWith(published, StringComparison.OrdinalIgnoreCase)) return "published";
             if (drafts != null && fullPath.StartsWith(drafts, StringComparison.OrdinalIgnoreCase)) return "drafts";
             if (views != null && fullPath.StartsWith(views, StringComparison.OrdinalIgnoreCase)) return "views";
+            if (pages != null && fullPath.StartsWith(pages, StringComparison.OrdinalIgnoreCase)) return "pages";
             return "unknown";
         }
 
         private IEnumerable<string> GetAllowedRoots() =>
-            new[] { GetPublishedRoot(), GetDraftsRoot(), GetViewsRoot() }
+            new[] { GetPublishedRoot(), GetDraftsRoot(), GetViewsRoot(), GetPagesRoot() }
                 .Where(r => r != null)
                 .Select(r => Path.GetFullPath(r));
 
         private string GetPublishedRoot() => ResolveFolderConfig("Folders:Published");
         private string GetDraftsRoot() => ResolveFolderConfig("Folders:Drafts");
         private string GetViewsRoot() => ResolveFolderConfig("Folders:Views");
+        private string GetPagesRoot() => ResolveFolderConfig("Folders:Pages");
 
         private string ResolveFolderConfig(string key)
         {
@@ -180,6 +212,7 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
         public string Label { get; set; }
         public string Role { get; set; }
         public string RootPath { get; set; }
+        public string EncodedRootPath { get; set; }
         public List<FileNode> Children { get; set; } = new();
     }
 
@@ -201,5 +234,11 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
     public class PromoteRequest
     {
         public string Path { get; set; }
+    }
+
+    public class CreateFileRequest
+    {
+        public string DirectoryPath { get; set; }
+        public string FileName { get; set; }
     }
 }

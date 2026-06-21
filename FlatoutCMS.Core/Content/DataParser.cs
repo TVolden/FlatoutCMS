@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -31,6 +32,7 @@ namespace FlatoutCMS.Core.Content
         {
             var model = yamlParser.Parse<TPageModel>(reader.Yaml);
             model.Content = Markdown;
+            PopulateDynamicFields(model, typeof(TPageModel));
             return model;
         }
 
@@ -42,7 +44,24 @@ namespace FlatoutCMS.Core.Content
             MethodInfo method = typeof(IYamlParser).GetMethod("Parse");
             var model = (IPageModel) method.MakeGenericMethod(modelType).Invoke(yamlParser, new[] { reader.Yaml });
             model.Content = Markdown;
+            PopulateDynamicFields(model, modelType);
             return model;
+        }
+
+        private void PopulateDynamicFields(IPageModel model, Type modelType)
+        {
+            if (model is not IWritableDynamicFields writable)
+                return;
+
+            var knownProperties = new HashSet<string>(
+                modelType.GetProperties().Select(p => p.Name),
+                StringComparer.OrdinalIgnoreCase);
+
+            foreach (var kv in yamlParser.ParseRaw(reader.Yaml))
+            {
+                if (!knownProperties.Contains(kv.Key))
+                    writable.AddField(kv.Key, kv.Value?.ToString() ?? "");
+            }
         }
     }
 }

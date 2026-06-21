@@ -31,13 +31,17 @@
         @foreach (var root in Model.Roots)
         {
             <div class="mt-3">
-                <p class="px-3 mb-1 text-[10px] font-bold tracking-widest uppercase text-stone-500">@root.Label</p>
+                <div class="flex items-center justify-between px-3 mb-1">
+                    <p class="text-[10px] font-bold tracking-widest uppercase text-stone-500">@root.Label</p>
+                    <button onclick="createFile('@root.EncodedRootPath')" title="New file"
+                            class="text-stone-600 hover:text-stone-300 leading-none cursor-pointer select-none">+</button>
+                </div>
                 @{ PrintNodes(root.Children, 0); }
             </div>
         }
         @if (!Model.Roots.Any())
         {
-            <p class="px-3 py-4 text-xs text-stone-500">No folders configured.<br />Add <code>Folders:Published</code>, <code>Folders:Drafts</code>, <code>Folders:Views</code> to appsettings.</p>
+            <p class="px-3 py-4 text-xs text-stone-500">No folders configured.<br />Add <code>Folders:Published</code>, <code>Folders:Drafts</code>, <code>Folders:Views</code>, or <code>Folders:Pages</code> to appsettings.</p>
         }
     </aside>
 
@@ -80,7 +84,10 @@
             {
                 <details class="@indent">
                     <summary class="flex items-center gap-1 px-3 py-0.5 text-xs text-stone-400 hover:text-stone-200 cursor-pointer select-none">
-                        <span class="text-stone-600">▸</span> @node.Name
+                        <span class="text-stone-600">▸</span>
+                        <span class="flex-1 truncate">@node.Name</span>
+                        <button onclick="createFile('@node.EncodedPath'); event.stopPropagation();" title="New file"
+                                class="text-stone-600 hover:text-stone-300 leading-none cursor-pointer select-none px-1">+</button>
                     </summary>
                     @{ PrintNodes(node.Children, depth + 1); }
                 </details>
@@ -99,12 +106,13 @@
 
 <script>
     const XSRF = '@xsrfToken';
-    let editor, currentPath = null, currentRole = null, isDirty = false, previewVisible = false, previewTimer = null;
+    let editor, currentPath = null, currentRole = null, isDirty = false, isLoading = false, previewVisible = false, previewTimer = null;
 
     const BADGES = {
         drafts:    { label: 'Draft',     cls: 'bg-amber-100 text-amber-800' },
         published: { label: 'Published', cls: 'bg-green-100 text-green-800' },
-        views:     { label: 'View',      cls: 'bg-sky-100 text-sky-800' }
+        views:     { label: 'View',      cls: 'bg-sky-100 text-sky-800' },
+        pages:     { label: 'Page',      cls: 'bg-violet-100 text-violet-800' }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -112,9 +120,17 @@
             lineNumbers: true, lineWrapping: true, mode: 'markdown'
         });
         editor.on('change', () => {
+            if (isLoading) return;
             if (!isDirty) { isDirty = true; setStatus('Unsaved'); }
             if (previewVisible) { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 300); }
         });
+
+        const toOpen = sessionStorage.getItem('openAfterReload');
+        if (toOpen) {
+            sessionStorage.removeItem('openAfterReload');
+            const link = document.querySelector(`.tree-file[data-path="${CSS.escape(toOpen)}"]`);
+            if (link) { openParents(link); loadFile(link); }
+        }
     });
 
     window.addEventListener('beforeunload', e => { if (isDirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -134,9 +150,11 @@
                 currentPath = link.dataset.path;
                 currentRole = data.role;
                 isDirty = false;
+                isLoading = true;
                 editor.setOption('mode', data.extension === '.md' ? 'markdown' : 'htmlmixed');
                 editor.setValue(data.content);
                 editor.clearHistory();
+                isLoading = false;
 
                 document.getElementById('current-file').textContent = link.textContent.trim();
                 setBadge(data.role);
@@ -202,6 +220,24 @@
         if (info) { b.textContent = info.label; b.className = `text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${info.cls}`; b.hidden = false; }
         else b.hidden = true;
     }
+    function createFile(dirPath) {
+        const name = prompt('New file name (e.g. about.md):');
+        if (!name || !name.trim()) return;
+        fetch('?handler=CreateFile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': XSRF },
+            body: JSON.stringify({ directoryPath: dirPath, fileName: name.trim() })
+        })
+        .then(r => { if (!r.ok) return r.text().then(t => { throw new Error(t || r.statusText); }); return r.json(); })
+        .then(data => { sessionStorage.setItem('openAfterReload', data.encodedPath); window.location.reload(); })
+        .catch(e => alert('Could not create file: ' + e.message));
+    }
+
+    function openParents(el) {
+        let p = el.parentElement;
+        while (p) { if (p.tagName === 'DETAILS') p.open = true; p = p.parentElement; }
+    }
+
     function setStatus(msg) { document.getElementById('save-status').textContent = msg; }
     function toast(msg) {
         const t = document.createElement('div');
