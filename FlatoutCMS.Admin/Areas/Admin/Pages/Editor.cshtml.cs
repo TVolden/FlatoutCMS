@@ -72,7 +72,7 @@ namespace FlatoutCMS.Admin.Areas.Admin.Pages
 
             var fullPath = Path.Combine(normalizedDir, fileName);
             if (System.IO.File.Exists(fullPath))
-                return Conflict("A file with that name already exists.");
+                return BadRequest("A file with that name already exists.");
 
             System.IO.File.WriteAllText(fullPath, "", Encoding.UTF8);
             return new JsonResult(new { success = true, encodedPath = EncodePath(fullPath) });
